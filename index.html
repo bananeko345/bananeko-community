@@ -2,22 +2,137 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Bananeko Community</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bananeko Community | Minecraft Server</title>
+    <script src="https://cdnjs.cloudflare.com"></script>
+    <script src="https://cdn.jsdelivr.net"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: white;
+        }
+
+        #vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            letter-spacing: 5px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        .server-status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            cursor: pointer;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .server-status:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .ip-address {
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+
+        .join-btn {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(45deg, #4caf50, #81c784);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-decoration: none;
+            transition: 0.3s;
+            animation: fadeInUp 2s ease-out;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <!-- 背景動画 -->
-    <div class="video-container">
-        <video autoplay muted loop playsinline id="bg-video">
-            <!-- 動画ファイル名をここに指定（mp4推奨） -->
-            <source src="background.mp4" type="video/mp4">
-        </video>
+
+    <div id="vanta-bg"></div>
+
+    <div class="container">
+        <h1>BANANEKO COMMUNITY</h1>
+        <div class="server-status" onclick="copyIP()">
+            Server IP: <span class="ip-address" id="ip">play.bananeko.net</span> (Click to Copy)
+        </div>
+        <a href="#" class="join-btn">DISCORD JOIN</a>
     </div>
 
-    <!-- メインコンテンツ -->
-    <div class="content">
-        <h1>Bananeko Community</h1>
-        <p>マイクラサーバーへようこそ！</p>
-    </div>
+    <script>
+        VANTA.CLOUDS({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            backgroundColor: 0x1e1e1e,
+            skyColor: 0x6893c8,
+            cloudColor: 0xadc1d1,
+            cloudShadowColor: 0x183550,
+            sunColor: 0xff9919,
+            sunGlareColor: 0xff6633,
+            sunlightColor: 0xff9933,
+            speed: 1.0
+        })
+
+        function copyIP() {
+            const ip = document.getElementById("ip").innerText;
+            navigator.clipboard.writeText(ip);
+            alert("IP Address Copied: " + ip);
+        }
+    </script>
 </body>
 </html>
