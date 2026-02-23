@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com"></script>
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #050505; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #87CEEB; }
         canvas { display: block; }
         
         .overlay {
@@ -20,7 +20,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.1) 100%);
             z-index: 10;
             pointer-events: none;
         }
@@ -28,51 +28,53 @@
         .content {
             text-align: center;
             pointer-events: auto;
+            transform: translateY(-20px);
         }
 
         h1 {
             font-family: 'Montserrat', 'Noto Sans JP', sans-serif;
-            font-size: clamp(3rem, 10vw, 6rem);
+            font-size: clamp(3.5rem, 12vw, 7rem);
             color: #fff;
             margin: 0;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            animation: titleFade 2s ease-out;
+            letter-spacing: 0.1em;
+            text-shadow: 0 8px 0 #4caf50, 0 15px 30px rgba(0,0,0,0.3);
+            animation: bounceIn 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         .discord-btn {
             display: inline-block;
             margin-top: 40px;
-            padding: 18px 45px;
+            padding: 22px 60px;
             background: #5865F2;
             color: white;
             text-decoration: none;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            border-radius: 4px;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-            border: 2px solid transparent;
-            animation: btnFade 2.5s ease-out;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(88, 101, 242, 0.5);
+            border: 4px solid #fff;
+            animation: pulse 2s infinite;
         }
 
         .discord-btn:hover {
-            background: transparent;
-            border-color: #5865F2;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.4);
+            transform: scale(1.1) rotate(-2deg);
+            background: #4752c4;
+            box-shadow: 0 15px 35px rgba(88, 101, 242, 0.7);
         }
 
-        @keyframes titleFade {
-            from { opacity: 0; transform: translateY(-30px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3) translateY(100px); }
+            70% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        @keyframes btnFade {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -81,7 +83,7 @@
     <div class="overlay">
         <div class="content">
             <h1>BANANEKO<br>COMMUNITY</h1>
-            <a href="https://discord.gg/eh3BXXqBMq" target="_blank" class="discord-btn">JOIN DISCORD</a>
+            <a href="https://discord.gg" target="_blank" class="discord-btn">JOIN DISCORD</a>
         </div>
     </div>
 
@@ -90,8 +92,8 @@
         
         function init() {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x1a0a05); // 深い夕焼けの底の色
-            scene.fog = new THREE.FogExp2(0x2d140b, 0.035); // 遠くの霧
+            scene.background = new THREE.Color(0x87CEEB); // 鮮やかな青空
+            scene.fog = new THREE.Fog(0x87CEEB, 20, 60); 
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -99,23 +101,23 @@
             renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // ライティング (夕焼け)
-            const sunLight = new THREE.DirectionalLight(0xff7b39, 1.2);
-            sunLight.position.set(50, 20, -50);
+            // 明るいライティング
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            sunLight.position.set(10, 50, 20);
             scene.add(sunLight);
-            scene.add(new THREE.AmbientLight(0x404040, 0.5));
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 
-            // ボクセル地形生成
+            // ボクセル地形
             world = new THREE.Group();
             const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-            
-            const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d5229 });
-            const dirtMat = new THREE.MeshLambertMaterial({ color: 0x4a321f });
-            const stoneMat = new THREE.MeshLambertMaterial({ color: 0x444444 });
+            const grassMat = new THREE.MeshLambertMaterial({ color: 0x7cfc00 }); // 明るい草色
+            const dirtMat = new THREE.MeshLambertMaterial({ color: 0x8b4513 });
+            const stoneMat = new THREE.MeshLambertMaterial({ color: 0x808080 });
 
-            for(let x = -25; x < 25; x++) {
-                for(let z = -25; z < 25; z++) {
-                    const h = Math.floor(Math.sin(x/5) * Math.cos(z/5) * 3) + 3;
+            for(let x = -30; x < 30; x++) {
+                for(let z = -30; z < 30; z++) {
+                    const noise = Math.sin(x/4) * Math.cos(z/4);
+                    const h = Math.floor(noise * 4) + 4;
                     for(let y = 0; y <= h; y++) {
                         let mat = dirtMat;
                         if (y === h) mat = grassMat;
@@ -129,34 +131,32 @@
             }
             scene.add(world);
 
-            // 雲の生成
-            const cloudGeo = new THREE.BoxGeometry(4, 1, 2);
-            const cloudMat = new THREE.MeshBasicMaterial({ color: 0xffa07a, transparent: true, opacity: 0.6 });
-            for(let i = 0; i < 15; i++) {
+            // 雲
+            const cloudGeo = new THREE.BoxGeometry(5, 1.2, 3);
+            const cloudMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+            for(let i = 0; i < 20; i++) {
                 const cloud = new THREE.Mesh(cloudGeo, cloudMat);
-                cloud.position.set(Math.random()*60-30, 15 + Math.random()*5, Math.random()*60-30);
+                cloud.position.set(Math.random()*80-40, 18 + Math.random()*8, Math.random()*80-40);
                 scene.add(cloud);
                 clouds.push(cloud);
             }
 
-            camera.position.set(15, 12, 15);
-            camera.lookAt(0, 2, 0);
+            camera.position.set(20, 15, 20);
         }
 
         let time = 0;
         function animate() {
             requestAnimationFrame(animate);
-            time += 0.002;
+            time += 0.0015;
 
-            // シネマティックカメラ移動
-            camera.position.x = 18 * Math.cos(time * 0.5);
-            camera.position.z = 18 * Math.sin(time * 0.5);
-            camera.lookAt(0, 2, 0);
+            camera.position.x = 25 * Math.cos(time);
+            camera.position.z = 25 * Math.sin(time);
+            camera.position.y = 15 + Math.sin(time * 0.5) * 2;
+            camera.lookAt(0, 5, 0);
 
-            // 雲の移動
             clouds.forEach(c => {
-                c.position.x += 0.01;
-                if(c.position.x > 30) c.position.x = -30;
+                c.position.x += 0.02;
+                if(c.position.x > 40) c.position.x = -40;
             });
 
             renderer.render(scene, camera);
